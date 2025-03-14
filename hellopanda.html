@@ -1,22 +1,28 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>hellopanda</title>
-    <link rel="stylesheet" href="hellopanda.css" />
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Pacifico&display=swap" rel="stylesheet">
-  </head>
-  
-  <body>
-    <H2 class="test">Hallo Zusammen💚</H2>
-    <div class="test2">
-      <p class="test">
-        🐼Hallo. Mein Name ist Bao Bao, ich bin 11 Jahre Altes, Ich liebe Bambus. 
-        <img src="images/panda.jpg" alt="Cute Panda" class="panda-img">
-   
-      </p>
+    <title>Hello Panda</title>
+    <link rel="stylesheet" href="hellopanda.css"> <!-- Link to your CSS file -->
+</head>
+<body>
+
+    <h1>Hallo Zusammen 💚</h1>
+
+    <p>🐼❤️ Hallo. Ich bin <strong>Hua Hua (和花)</strong>, und ich bin 4 Jahre alt! Ich liebe Bambus und bin der beliebteste Panda in China. Klick auf mich und entdecke eine Überraschung! ❤️🐼</p>
+
+    <!-- Clickable Panda Image with emoji overlay -->
+    <div class="image-container">
+        <img id="pandaImg" class="panda-img clickable-img" src="images/panda.jpg" alt="Panda Image" onclick="handleClick()">
+        <div id="emojiOverlay" class="emoji-overlay hidden"></div>
     </div>
-  </body>
-  
+
+    <!-- YouTube Video Embed (Initially Hidden) -->
+    <div id="videoContainer" class="video-container hidden">
+        <iframe id="youtube-video" src="https://www.youtube.com/embed/q-bDIotItNc" allowfullscreen></iframe>
+    </div>
+
+    <script src="hellopanda.js"></script> <!-- Link to your JS file -->
+</body>
 </html>
