@@ -4,25 +4,124 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hello Panda</title>
-    <link rel="stylesheet" href="hellopanda.css"> <!-- Link to your CSS file -->
+    <link rel="stylesheet" href="hellopanda.css">  
 </head>
 <body>
+    <h1>Hallo Zusammen</h1>
+    <p>🐼 Hallo. Ich bin <strong>Hua Hua (和花)🌼</strong>, und ich bin 4 Jahre alt! Ich liebe Bambus 🌿und bin der beliebteste Panda in China. Klick auf mich und entdecke eine Überraschung!ᕙ(  •̀ ᗜ •́  )ᕗ</p>
 
-    <h1>Hallo Zusammen 💚</h1>
-
-    <p>🐼❤️ Hallo. Ich bin <strong>Hua Hua (和花)</strong>, und ich bin 4 Jahre alt! Ich liebe Bambus und bin der beliebteste Panda in China. Klick auf mich und entdecke eine Überraschung! ❤️🐼</p>
-
-    <!-- Clickable Panda Image with emoji overlay -->
+    <!-- Clickable Panda Image -->
     <div class="image-container">
         <img id="pandaImg" class="panda-img clickable-img" src="images/panda.jpg" alt="Panda Image" onclick="handleClick()">
-        <div id="emojiOverlay" class="emoji-overlay hidden"></div>
     </div>
 
-    <!-- YouTube Video Embed (Initially Hidden) -->
-    <div id="videoContainer" class="video-container hidden">
-        <iframe id="youtube-video" src="https://www.youtube.com/embed/q-bDIotItNc" allowfullscreen></iframe>
+    <!-- Input and Button for Fetching Click Data by ID -->
+    <div>
+        <input id="clickId" type="text" placeholder="ID eingeben">
+        <button onclick="showClicks()">Klicks zeigen</button>
+        <p id="result"></p>
     </div>
 
-    <script src="hellopanda.js"></script> <!-- Link to your JS file -->
+    <script>
+        // Array of GIF images
+        const gifImages = [
+            "images/huahua-01.gif",
+            "images/huahua-02.gif",
+            "images/huahua-03.gif"
+        ];
+
+        let clickCount = 0;
+        const originalImage = "images/panda.jpg"; // Path to the original panda image
+        const imgElement = document.getElementById("pandaImg");
+
+        // Function to handle click on the panda image
+        function handleClick() {
+            clickCount++;
+            console.log("Click Count:", clickCount);
+
+            if (clickCount === 1) {
+                // Show a random GIF
+                let randomGif = gifImages[Math.floor(Math.random() * gifImages.length)];
+                imgElement.src = randomGif;
+                console.log("Showing GIF:", randomGif);
+            } else if (clickCount === 3) {
+                // Reset to original image
+                clickCount = 0;
+                imgElement.src = originalImage;
+                console.log("Resetting to Panda Image");
+            }
+
+            // Ensure image dimensions stay consistent
+            imgElement.style.width = "400px";
+            imgElement.style.height = "auto";
+            console.log("Image Source:", imgElement.src);
+
+            // Send click data to the server
+            fetch('/track-click', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ elementId: 'pandaImg' }), // Send the element ID
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Click data saved:', data);
+            })
+            .catch(error => {
+                console.error('Error saving click data:', error);
+            });
+        }
+
+        // Function to fetch click data by ID
+        function showClicks() {
+            // 1. Get the ID from the input field
+            const id = document.getElementById('clickId').value;
+
+            // 2. Build the endpoint URL, optionally adding the query parameter
+            let url = '/api/getClicks';
+            if (id) {
+                url += '?id=' + encodeURIComponent(id);
+            }
+
+            // 3. Fetch data from the server
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    // 4. Handle empty or missing data
+                    if (!data || data.length === 0) {
+                        document.getElementById('result').innerHTML = 'No click data found.';
+                        return;
+                    }
+
+                    // 5. Build an HTML table with custom headers
+                    let html = `
+                        <table border="1" cellspacing="0" cellpadding="5">
+                            <tr>
+                                <th>ID</th>
+                                <th>Clicked Element</th>
+                                <th>Clicked Time</th>
+                            </tr>
+                    `;
+
+                    // 6. Populate rows with the fetched data
+                    data.forEach(row => {
+                        html += `
+                            <tr>
+                                <td>${row.id}</td>
+                                <td>${row.clicked_element}</td>
+                                <td>${row.clicked_time}</td>
+                            </tr>
+                        `;
+                    });
+
+                    html += '</table>';
+
+                    // 7. Insert the table into the page
+                    document.getElementById('result').innerHTML = html;
+                })
+                .catch(error => console.error('Error fetching click data:', error));
+        }
+    </script>
 </body>
 </html>
